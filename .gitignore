@@ -1,0 +1,17 @@
+.env
+
+venv/
+env/
+.venv/
+
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+!output/.keep
+
+.vscode/
+.idea/
+.cursor/
+.DS_Store
