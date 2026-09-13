@@ -15,7 +15,10 @@ This pipeline was built to prioritize speed, token efficiency, and resilience ag
   - Significantly reduces LLM token consumption and eliminates raw HTML dumps.
 - **Phase 3: Structured Extraction (Gemini 2.5 Flash + Pydantic)**
   - Forces strict JSON output schemas matching the target ICP data points.
-  - **Bonus Feature:** Automatically tracks input/output tokens and estimates API cost per domain.
+  - **Bonus Feature (Search Integration & Agentic Frameworks):** Implements a custom multi-step tool-calling state machine.
+    If the LLM identifies a founder but cannot find their LinkedIn on the DOM, the agent loops into a DuckDuckGo Search
+    function to autonomously locate and enrich the payload with their external URL.
+  - **Bonus Feature (Cost Tracking):** Automatically tracks input/output tokens and estimates the exact API cost per domain.
 
 ## Prerequisites
 
