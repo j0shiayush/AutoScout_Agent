@@ -2,7 +2,7 @@
 
 An asynchronous, Python-based AI agent designed to autonomously crawl company domains, handle dynamic JavaScript rendering, extract relevant subpages, and utilize LLMs to generate structured company intelligence.
 
-## 🏗️ Architecture & Features
+## Architecture & Features
 
 This pipeline was built to prioritize speed, token efficiency, and resilience against common scraping blockers.
 
@@ -17,12 +17,12 @@ This pipeline was built to prioritize speed, token efficiency, and resilience ag
   - Forces strict JSON output schemas matching the target ICP data points.
   - **Bonus Feature:** Automatically tracks input/output tokens and estimates API cost per domain.
 
-## 🛠️ Prerequisites
+## Prerequisites
 
 - Python 3.10+
 - A Google Gemini API Key
 
-## ⚙️ Setup & Installation
+## Setup & Installation
 
 1. **Clone the repository:**
    ```bash
@@ -51,7 +51,7 @@ This pipeline was built to prioritize speed, token efficiency, and resilience ag
    GEMINI_API_KEY="your_api_key_here"
    ```
 
-## 🚀 Usage
+## Usage
 
 Run the main pipeline to process the target domains (`postman.com`, `supabase.com`, `vapi.ai`):
 
@@ -61,7 +61,7 @@ python main.py
 
 The script will output a structured intelligence report to `output/output.json` containing company overviews, ICPs, contact points, and key leadership.
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 AutoScout_Agent/
