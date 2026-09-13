@@ -10,7 +10,6 @@ from ddgs import DDGS
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-# 1. Define the Strict Output Schema using Pydantic
 class LeadershipMember(BaseModel):
     name: str = Field(description="Full name of the team member or founder.")
     role: str = Field(description="Job title or role (e.g., CEO, Founder).")
@@ -28,7 +27,6 @@ class AutoScoutExtractor:
         self.model_name = model_name
         self.client = genai.Client()
         
-        # Approximate Cost for Gemini Flash models (per 1 Million tokens)
         self.cost_per_1m_input = 0.075 
         self.cost_per_1m_output = 0.30
 
@@ -53,7 +51,6 @@ class AutoScoutExtractor:
         logging.info(f"Agentic Loop Triggered: Searching web for '{name}' LinkedIn...")
         
         try:
-            # Adding a brief sleep to respect search engine rate limits
             time.sleep(1.5)
             results = DDGS().text(query, max_results=1)
             if results and len(results) > 0:
@@ -86,7 +83,6 @@ class AutoScoutExtractor:
         """
 
         try:
-            # Node 1: Base Extraction
             response = self.client.models.generate_content(
                 model=self.model_name,
                 contents=prompt,
@@ -98,18 +94,13 @@ class AutoScoutExtractor:
             )
             
             extracted_data = json.loads(response.text)
-            
-            # Node 2: Agentic Search Enrichment Loop
-            # If the LLM missed a LinkedIn URL, the agent autonomously searches for it
             for leader in extracted_data.get("key_leadership", []):
                 if leader.get("name") and not leader.get("linkedin_url"):
                     found_url = self._agentic_linkedin_search(leader["name"], domain)
                     if found_url:
                         leader["linkedin_url"] = found_url
-                        # Boost confidence score slightly since we successfully enriched the data
                         extracted_data["confidence_score"] = min(1.0, extracted_data.get("confidence_score", 0.0) + 0.05)
             
-            # Record Cost
             if response.usage_metadata:
                 cost = self._calculate_cost(response.usage_metadata)
                 extracted_data["_metadata"] = {"estimated_cost_usd": cost}
