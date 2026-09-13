@@ -1,11 +1,11 @@
 [
   {
     "domain": "postman.com",
-    "timestamp": "2026-09-13T17:25:51.915886Z",
+    "timestamp": "2026-09-13T18:20:10.655056Z",
     "status": "success",
     "data": {
-      "company_overview": "Postman is an API platform for building and using APIs, simplifying each step of the API lifecycle and streamlining collaboration. It is the world's leading API platform, used by over 40 million users and 500,000 companies worldwide to develop, test, manage, and distribute APIs and services.",
-      "target_audience": "Engineers, developers, teams, and organizations involved in building, testing, managing, and distributing APIs at various scales.",
+      "company_overview": "Postman is the world's leading API platform designed to simplify every step of the API lifecycle. It enables individuals, teams, and enterprises to develop, test, manage, and distribute APIs and services efficiently and collaboratively.",
+      "target_audience": "Individuals, teams, and enterprises, particularly engineers, who are building, testing, managing, and distributing APIs and services.",
       "contact_points": [
         "info@postman.com",
         "info-jp@postman.com"
@@ -14,52 +14,58 @@
         {
           "name": "Abhinav Asthana",
           "role": "CEO/Co-Founder",
-          "linkedin_url": null
+          "linkedin_url": "https://www.linkedin.com/in/abhinavasthana"
         },
         {
           "name": "Ankit Sobti",
           "role": "CTO/Co-Founder",
-          "linkedin_url": null
+          "linkedin_url": "https://www.linkedin.com/in/ankit-sobti"
         },
         {
           "name": "Abhijit Kane",
           "role": "Product Architect/Co-Founder",
-          "linkedin_url": null
+          "linkedin_url": "https://www.linkedin.com/in/abhinavasthana/"
         }
       ],
       "confidence_score": 1.0,
       "_metadata": {
-        "estimated_cost_usd": 0.0007329750000000001
+        "estimated_cost_usd": 0.0006998999999999999
       }
     }
   },
   {
     "domain": "supabase.com",
-    "timestamp": "2026-09-13T17:27:17.468079Z",
+    "timestamp": "2026-09-13T18:21:47.181783Z",
     "status": "success",
     "data": {
-      "company_overview": "Supabase is an open-source Postgres development platform offering a comprehensive suite of backend services including database, authentication, and APIs. It empowers developers and innovation teams to build and scale applications rapidly, from prototypes to enterprise-level production.",
-      "target_audience": "Developers, innovation teams, and companies ranging from startups to enterprises, including AI builders and citizen developers, who need a scalable and secure backend platform built on Postgres.",
+      "company_overview": "Supabase is a Postgres development platform that enables users to build and scale applications by providing a full Postgres database along with integrated backend services. It offers features such as Authentication, Data APIs, Edge Functions, Realtime Data, Storage, and Vector embeddings, allowing projects to grow from simple websites to internet-scale workloads.",
+      "target_audience": "Developers and companies ranging from individuals working on passion projects and simple websites to fast-growing companies and large enterprises running internet-scale applications, seeking a comprehensive Postgres-based development platform with integrated backend services.",
       "contact_points": [],
       "key_leadership": [],
-      "confidence_score": 0.85,
+      "confidence_score": 0.65,
       "_metadata": {
-        "estimated_cost_usd": 0.000700875
+        "estimated_cost_usd": 0.000401025
       }
     }
   },
   {
     "domain": "vapi.ai",
-    "timestamp": "2026-09-13T17:27:52.221013Z",
+    "timestamp": "2026-09-13T18:22:29.196798Z",
     "status": "success",
     "data": {
-      "company_overview": "Vapi provides a unified platform for builders and enterprises to rapidly create, deploy, and improve advanced voice AI agents. It handles the underlying infrastructure, offering orchestration, real-time monitoring, and enterprise-grade configurability to accelerate development from prompt to production.",
-      "target_audience": "Developers and enterprises building advanced voice AI agents.",
+      "company_overview": "Vapi provides a unified platform for builders and enterprises to create, deploy, and improve advanced voice AI agents rapidly. It handles the underlying infrastructure, offering features like orchestration, real-time monitoring, and enterprise-grade configurability for scalable voice solutions.",
+      "target_audience": "Developers and enterprises looking to build and deploy advanced voice AI agents for various use cases like customer support, lead qualification, and appointment scheduling.",
       "contact_points": [],
-      "key_leadership": [],
-      "confidence_score": 0.65,
+      "key_leadership": [
+        {
+          "name": "Jason Mitura",
+          "role": "VP of Software Development",
+          "linkedin_url": "https://www.linkedin.com/in/jasonmitura/"
+        }
+      ],
+      "confidence_score": 0.8500000000000001,
       "_metadata": {
-        "estimated_cost_usd": 0.000178725
+        "estimated_cost_usd": 0.00018314999999999998
       }
     }
   }

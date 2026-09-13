@@ -1,13 +1,16 @@
 import os
 import json
 import logging
+import time
 from typing import List, Optional
 from pydantic import BaseModel, Field
 from google import genai
 from google.genai import types
+from ddgs import DDGS
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
+# 1. Define the Strict Output Schema using Pydantic
 class LeadershipMember(BaseModel):
     name: str = Field(description="Full name of the team member or founder.")
     role: str = Field(description="Job title or role (e.g., CEO, Founder).")
@@ -22,20 +25,15 @@ class CompanyIntelligence(BaseModel):
 
 class AutoScoutExtractor:
     def __init__(self, model_name: str = "gemini-2.5-flash"):
-        """
-        Initializes the Gemini client. It automatically picks up GEMINI_API_KEY from the environment.
-        """
         self.model_name = model_name
         self.client = genai.Client()
         
+        # Approximate Cost for Gemini Flash models (per 1 Million tokens)
         self.cost_per_1m_input = 0.075 
         self.cost_per_1m_output = 0.30
 
     def _calculate_cost(self, usage_metadata) -> float:
-        """
-        Calculates the estimated API cost based on token usage.
-        Bonus point requirement implemented here.
-        """
+        """Calculates the estimated API cost based on token usage."""
         input_tokens = usage_metadata.prompt_token_count or 0
         output_tokens = usage_metadata.candidates_token_count or 0
         
@@ -44,43 +42,74 @@ class AutoScoutExtractor:
         total_cost = input_cost + output_cost
         
         logging.info(f"Tokens Used - Input: {input_tokens} | Output: {output_tokens}")
-        logging.info(f"Estimated Cost: ${total_cost:.6f}")
         return total_cost
+
+    def _agentic_linkedin_search(self, name: str, domain: str) -> Optional[str]:
+        """
+        Custom tool-calling function: Uses a search engine to find external 
+        LinkedIn URLs for founders if not found on the direct website.
+        """
+        query = f"{name} {domain} site:linkedin.com/in/"
+        logging.info(f"Agentic Loop Triggered: Searching web for '{name}' LinkedIn...")
+        
+        try:
+            # Adding a brief sleep to respect search engine rate limits
+            time.sleep(1.5)
+            results = DDGS().text(query, max_results=1)
+            if results and len(results) > 0:
+                discovered_url = results[0].get("href")
+                logging.info(f"Found missing LinkedIn URL: {discovered_url}")
+                return discovered_url
+        except Exception as e:
+            logging.warning(f"Search tool failed for {name}: {e}")
+            
+        return None
 
     def extract_intelligence(self, domain: str, scraped_text: str) -> dict:
         """
-        Passes the cleaned scraped text to the LLM and forces a structured Pydantic response.
+        Executes a multi-step agentic extraction:
+        1. Pydantic DOM extraction.
+        2. Validation loop for missing LinkedIn profiles.
+        3. Web search tool calling to enrich missing data.
         """
         if not scraped_text or len(scraped_text) < 50:
-            logging.warning(f"Insufficient text scraped for {domain}. Returning default structure.")
+            logging.warning(f"Insufficient text scraped for {domain}.")
             return self._get_empty_structure()
 
         prompt = f"""
         You are an expert AI data extraction agent. I have scraped the website context for {domain}.
-        Your task is to analyze the provided text and extract the company intelligence perfectly 
-        adhering to the requested JSON schema.
-        
-        If certain data points (like emails or leadership) are not found in the text, leave the arrays empty.
-        Do not hallucinate or invent data. Base your answers entirely on the context below.
+        Extract the company intelligence perfectly adhering to the requested JSON schema.
+        If a LinkedIn URL is missing, set it to null.
         
         --- SCRAPED CONTEXT ---
         {scraped_text}
         """
 
         try:
-            logging.info(f"Sending {len(scraped_text)} chars to Gemini for extraction...")
+            # Node 1: Base Extraction
             response = self.client.models.generate_content(
                 model=self.model_name,
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json",
                     response_schema=CompanyIntelligence,
-                    temperature=0.1, # Low temperature for analytical extraction
+                    temperature=0.1, 
                 ),
             )
             
             extracted_data = json.loads(response.text)
             
+            # Node 2: Agentic Search Enrichment Loop
+            # If the LLM missed a LinkedIn URL, the agent autonomously searches for it
+            for leader in extracted_data.get("key_leadership", []):
+                if leader.get("name") and not leader.get("linkedin_url"):
+                    found_url = self._agentic_linkedin_search(leader["name"], domain)
+                    if found_url:
+                        leader["linkedin_url"] = found_url
+                        # Boost confidence score slightly since we successfully enriched the data
+                        extracted_data["confidence_score"] = min(1.0, extracted_data.get("confidence_score", 0.0) + 0.05)
+            
+            # Record Cost
             if response.usage_metadata:
                 cost = self._calculate_cost(response.usage_metadata)
                 extracted_data["_metadata"] = {"estimated_cost_usd": cost}
@@ -92,9 +121,8 @@ class AutoScoutExtractor:
             return self._get_empty_structure()
             
     def _get_empty_structure(self) -> dict:
-        """Fallback mechanism if the LLM fails, ensuring the script never crashes."""
         return {
-            "company_overview": "Data extraction failed or insufficient context.",
+            "company_overview": "Data extraction failed.",
             "target_audience": "Unknown",
             "contact_points": [],
             "key_leadership": [],
